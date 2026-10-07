@@ -1,6 +1,5 @@
 import csv
 from operator import attrgetter
-
 class Strumento:
     def __init__(self, id_strumento, tipo, marca, anno_acquisto, valore):
         self.id_strumento = id_strumento
@@ -31,6 +30,8 @@ class DepositoStrumenti:
         self.responsabile = responsabile
         self.strumenti = {}
         self.prestiti = {}
+        self.cont_p = 1
+
 
     def carica_file_strumenti(self, file_path):
         """Carica gli strumenti dal file"""
@@ -65,18 +66,21 @@ class DepositoStrumenti:
         """Ordina gli strumenti per marca in ordine alfabetico"""
         ordinati = sorted(self.strumenti.values(), key=attrgetter("marca"))
         return ordinati
-
     def nuovo_prestito(self, data, id_strumento, cognome_allievo):
         """Crea un nuovo prestito"""
         if id_strumento not in self.strumenti:
             raise Exception ("strumento non trovato")
         if id_strumento in self.prestiti:
             raise Exception ("lo strumento è già in prestito")
-        cont = 0
-        id_prestito = "P" +str(cont + 1)
-        nuovo_prestito = Prestito(id_prestito, data, id_strumento, cognome_allievo)
-        self.prestiti[id_strumento] = nuovo_prestito
-        return nuovo_prestito
+        else:
+            id_prestito = "P" +str(self.cont_p)
+            self.cont_p += 1
+            nuovo_prestito = Prestito(id_prestito, data, id_strumento, cognome_allievo)
+            self.prestiti[id_prestito] = nuovo_prestito
+            return nuovo_prestito
     def termina_prestito(self, id_prestito):
         """Termina un prestito in atto"""
-        # TODO
+        if id_prestito not in self.prestiti:
+            raise Exception(f"Errore: il prestito '{id_prestito}' non esiste.")
+            # Rimozione del prestito dal sistema
+        self.prestiti.pop(id_prestito, None)
