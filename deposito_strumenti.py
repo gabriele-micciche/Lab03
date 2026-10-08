@@ -70,14 +70,15 @@ class DepositoStrumenti:
         """Crea un nuovo prestito"""
         if id_strumento not in self.strumenti:
             raise Exception ("strumento non trovato")
-        if id_strumento in self.prestiti:
-            raise Exception ("lo strumento è già in prestito")
-        else:
-            id_prestito = "P" +str(self.cont_p)
-            self.cont_p += 1
-            nuovo_prestito = Prestito(id_prestito, data, id_strumento, cognome_allievo)
-            self.prestiti[id_prestito] = nuovo_prestito
-            return nuovo_prestito
+        for s in self.prestiti.values():
+            if s.id_strumento == id_strumento:
+                raise Exception ("lo strumento è già in prestito")
+
+        id_prestito = "P" +str(self.cont_p)
+        self.cont_p += 1
+        prestito = Prestito(id_prestito, data, id_strumento, cognome_allievo)
+        self.prestiti[id_prestito] = prestito
+        return prestito
     def termina_prestito(self, id_prestito):
         """Termina un prestito in atto"""
         if id_prestito not in self.prestiti:
